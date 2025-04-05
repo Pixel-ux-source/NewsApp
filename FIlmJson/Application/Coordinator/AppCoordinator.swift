@@ -15,7 +15,13 @@ public final class AppCoordinator: CoordinatorProtocol {
     }
     
     func start() {
-        let vc = FilmController()
+        let vc = NewsController()
+        vc.coordinator = self
+        navigatorController.pushViewController(vc, animated: true)
+    }
+    
+    func openToDetail() {
+        let vc = DetailController()
         vc.coordinator = self
         navigatorController.pushViewController(vc, animated: true)
     }

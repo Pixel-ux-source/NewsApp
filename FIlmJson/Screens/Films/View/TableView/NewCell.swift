@@ -8,11 +8,10 @@
 import UIKit
 import SnapKit
 
-final class FilmCell: UITableViewCell {
+final class NewCell: UITableViewCell {
     // MARK: – UI Elements
     private lazy var mainImage: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "Image")
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 10
         imageView.clipsToBounds = true
@@ -23,17 +22,15 @@ final class FilmCell: UITableViewCell {
         let label = UILabel()
         label.font = .systemFont(ofSize: 18, weight: .bold)
         label.textColor = .white
-        label.numberOfLines = 1
-        label.text = "Заголовок"
+        label.numberOfLines = 2
         return label
     }()
     
-    private lazy var messageLabel: UILabel = {
+    private lazy var descriptionLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14, weight: .regular)
         label.textColor = .lightGray
         label.numberOfLines = 0
-        label.text = "Сообщение Сообщение Сообщение Сообщение Сообщение Сообщение Сообщение Сообщение Сообщение СообщениеСообщение"
         return label
     }()
     
@@ -41,23 +38,21 @@ final class FilmCell: UITableViewCell {
         let label = UILabel()
         label.font = .systemFont(ofSize: 12, weight: .regular)
         label.textColor = .lightGray
-        label.text = "01.02.2021 / 12:00:00"
         label.numberOfLines = 1
         return label
     }()
     
     private lazy var stackViewText: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [titleLabel, messageLabel])
-        stackView.spacing = 8
+        let stackView = UIStackView(arrangedSubviews: [titleLabel, descriptionLabel])
         stackView.axis = .vertical
         stackView.alignment = .fill
-        stackView.distribution = .fill
+        stackView.distribution = .fillEqually
         return stackView
     }()
     
     private lazy var stackViewDate: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [dateLabel, stackViewText])
-        stackView.spacing = 4
+        stackView.spacing = 0
         stackView.axis = .vertical
         stackView.alignment = .fill
         stackView.distribution = .fill
@@ -67,8 +62,8 @@ final class FilmCell: UITableViewCell {
     private lazy var stackViewMain: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [mainImage, stackViewDate])
         stackView.spacing = 15
-        stackView.axis = .horizontal
-        stackView.alignment = .center
+        stackView.axis = .vertical
+        stackView.alignment = .fill
         stackView.distribution = .fill
         return stackView
     }()
@@ -100,9 +95,6 @@ final class FilmCell: UITableViewCell {
     }
     
     private func setupConstraints() {
-        mainImage.snp.makeConstraints { make in
-            make.width.equalTo(160)
-        }
         
         stackViewMain.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(14)
@@ -110,6 +102,22 @@ final class FilmCell: UITableViewCell {
             make.leading.equalToSuperview().inset(16)
             make.trailing.equalToSuperview().inset(16)
         }
+        
+        mainImage.snp.makeConstraints { make in
+            make.height.equalTo(160)
+        }
     }
     
+    // MARK: – Set UI
+    func set(_ titleL: String?, _ desc: String?, _ date: String?) {
+        titleLabel.text = titleL
+        descriptionLabel.text = desc
+        dateLabel.text = date
+    }
+    
+    func setImage(_ dataImage: Data) {
+        DispatchQueue.main.async {
+            self.mainImage.image = UIImage(data: dataImage)
+        }
+    }
 }

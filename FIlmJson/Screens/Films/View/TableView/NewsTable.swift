@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class FilmsTable: UITableView {
+final class NewsTable: UITableView {
     
     // MARK: – Lyfe Cycle
     override init(frame: CGRect, style: UITableView.Style) {
@@ -26,7 +26,7 @@ final class FilmsTable: UITableView {
     
     // MARK: – Register Cell
     private func registerCell() {
-        register(FilmCell.self, forCellReuseIdentifier: FilmCell.id)
+        register(NewCell.self, forCellReuseIdentifier: NewCell.id)
     }
     
 }
