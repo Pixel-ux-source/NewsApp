@@ -6,10 +6,12 @@
 //
 
 import UIKit
+import SDWebImage
 
 final class NewsDataSource: NSObject, UITableViewDataSource {
-    var model: [News] = CoreDataManager.shared.fetchData()
+    var model: [News] = []
     private let network = NetworkService()
+    private let imageCache = NSCache<NSString, NSData>()
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         model.count
@@ -17,18 +19,17 @@ final class NewsDataSource: NSObject, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: NewCell.id) as? NewCell else { fatalError("ERROR_FILM_CELL_ID") }
-        // Разобраться с @escaping
-        // Понять где create
         
         let item = model[indexPath.row]
-        
-        // Как работать с кешем?
         cell.set(item.titleNews, item.descriptions, item.date)
- 
-        network.readUrl(item.photo) { data in
-            guard let data else { return }
-            cell.setImage(data)
-        }
+
+        // Добавить многопоточку в сервис и кор дату менеджер
+        let url = URL(string: item.photo)
+        cell.mainImage.sd_setImage(with: url,
+                                   placeholderImage: UIImage(systemName: "photo"),
+                                   options: .fromCacheOnly,
+                                   context: nil)
+        
         return cell
     }
 }

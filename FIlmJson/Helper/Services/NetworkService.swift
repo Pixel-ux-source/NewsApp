@@ -6,59 +6,35 @@
 //
 
 import UIKit
+import Alamofire
+import ObjectMapper
 
 final class NetworkService {
+    // MARK: – Set URL
+    private let param: Parameters = [
+        "q":"apple",
+        "from":"2025-04-02",
+        "to":"2025-04-02",
+        "sortBy":"popularity",
+        "apiKey":"f3c5a84e22bb4cfabad0cd31a6c89a8a"
+    ]
     
-    private let url = URL(string: "https://newsapi.org/v2/everything?q=apple&from=2025-04-02&to=2025-04-02&sortBy=popularity&apiKey=f3c5a84e22bb4cfabad0cd31a6c89a8a")
-    private let session = URLSession(configuration: .default)
-    
-    func getData() {
-        guard let url else { return }
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        let task = session.dataTask(with: request) { data, response, error in
-            do {
-                guard let data else { return }
-                let json = try? JSONSerialization.jsonObject(with: data)
-                guard let jsonData = json as? [String: Any] else { return }
-                
-                guard let arrayNews = jsonData["articles"] as? NSArray else { return }
-                
-                arrayNews.forEach { news in
-                    guard let unwrpNews = news as? [String:Any] else { return }
-                    guard let titleNews = unwrpNews["title"] as? String else { return }
-                    guard let descriptions = unwrpNews["description"] as? String else { return }
-                    guard let urlToImage = unwrpNews["urlToImage"] as? String else { return }
-                    guard let publishedAt = unwrpNews["publishedAt"] as? String else { return }
-
-                    DispatchQueue.main.async {
-                        CoreDataManager.shared.createData(title: titleNews, descriptions: descriptions, image: urlToImage, date: publishedAt)
-                    }
+    // MARK: – GET
+    func getData<T: News>(_ type: T.Type, completion: @escaping ([String: Any]) -> ())
+    where T: Mappable, T: NewsModelProtocol {
+        AF.request(type.urlAPI(), method: .get, parameters: param, headers: nil).validate().responseData(queue: .global()) { (response) in
+            switch response.result {
+            case .success(let data):
+                guard let res = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return }
+                DispatchQueue.main.async {
+                    completion(res)
                 }
+            case .failure(let error):
+                print("❌Error: \(error.localizedDescription)")
             }
         }
-        task.resume()
-    }
-    
-    func readUrl(_ urlImage: String?, _ completion: @escaping (Data?) -> ()) {
-        guard let urlImage else { return }
-        guard let url = URL(string: urlImage) else { return }
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        
-        let task = session.dataTask(with: request) { data, response, error in
-            if let error = error {
-                print("❌ Error from task \(error.localizedDescription)")
-            }
-            
-            guard let response = response as? HTTPURLResponse, (200...299).contains(response.statusCode) else { return }
-            print("✅ Request success: \(response.statusCode)")
-            
-            completion(data)
-        }
-        task.resume()
     }
 }
 
+
+//"https://newsapi.org/v2/everything?q=apple&from=2025-04-02&to=2025-04-02&sortBy=popularity&apiKey=f3c5a84e22bb4cfabad0cd31a6c89a8a"

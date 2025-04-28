@@ -9,7 +9,7 @@ import UIKit
 import CoreData
 
 public final class CoreDataManager {
-    // MARK: – Single Tone
+    // MARK: – Singleton
     static let shared = CoreDataManager()
     private init() {}
     
@@ -27,10 +27,12 @@ public final class CoreDataManager {
     func createData(title: String, descriptions: String, image: String, date: String) {
         guard let userEntityDescription = NSEntityDescription.entity(forEntityName: "News", in: context) else { return }
         let news = News(entity: userEntityDescription, insertInto: context)
+        
         news.titleNews = title
         news.descriptions = descriptions
         news.photo = image
         news.date = date
+        
         appDelegate.saveContext()
     }
     

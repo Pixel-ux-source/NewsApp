@@ -15,14 +15,15 @@ public final class AppCoordinator: CoordinatorProtocol {
     }
     
     func start() {
-        let vc = NewsController()
+        let vc = Builder.build()
         vc.coordinator = self
         navigatorController.pushViewController(vc, animated: true)
     }
     
-    func openToDetail() {
+    func openToDetail(_ image: UIImage?, _ date: String?, _ title: String?, _ description: String?) {
         let vc = DetailController()
         vc.coordinator = self
+        vc.didSelect(image, date, title, description)
         navigatorController.pushViewController(vc, animated: true)
     }
 }

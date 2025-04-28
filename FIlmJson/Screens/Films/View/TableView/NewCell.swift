@@ -10,7 +10,7 @@ import SnapKit
 
 final class NewCell: UITableViewCell {
     // MARK: – UI Elements
-    private lazy var mainImage: UIImageView = {
+    lazy var mainImage: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 10
@@ -95,7 +95,6 @@ final class NewCell: UITableViewCell {
     }
     
     private func setupConstraints() {
-        
         stackViewMain.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(14)
             make.bottom.equalToSuperview().inset(14)
@@ -108,16 +107,27 @@ final class NewCell: UITableViewCell {
         }
     }
     
+    // MARK: – Getter
+    func getImage() -> UIImage? {
+        return mainImage.image
+    }
+
+    func getTitle() -> String? {
+        return titleLabel.text
+    }
+
+    func getDescription() -> String? {
+        return descriptionLabel.text
+    }
+
+    func getDate() -> String? {
+        return dateLabel.text
+    }
+    
     // MARK: – Set UI
     func set(_ titleL: String?, _ desc: String?, _ date: String?) {
         titleLabel.text = titleL
         descriptionLabel.text = desc
         dateLabel.text = date
-    }
-    
-    func setImage(_ dataImage: Data) {
-        DispatchQueue.main.async {
-            self.mainImage.image = UIImage(data: dataImage)
-        }
     }
 }

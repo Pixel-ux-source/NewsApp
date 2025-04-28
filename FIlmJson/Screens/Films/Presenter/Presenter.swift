@@ -7,10 +7,6 @@
 
 import UIKit
 
-// Посмотреть в другом проекте как принимается api через date и как записать в базу через data
-// Доделать presenter
-// Что значит ! около файла в гит?
-
 protocol NewsControllerProtocol: AnyObject {
     func setupData(_ model: [News])
 }
@@ -33,8 +29,6 @@ final class Presenter: PresenterProtocol {
     func showData() {
         view?.setupData(model)
     }
-    
-
 }
 
 

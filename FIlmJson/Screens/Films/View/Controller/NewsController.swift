@@ -25,6 +25,13 @@ final class NewsController: UIViewController {
         super.viewDidLoad()
         configureView()
         configureTV()
+        presesnter.showData()
+        
+        network.getData(News.self) { data in
+            for item in data {
+                print(item)
+            }
+        }
     }
 
     // MARK: – Configure View
@@ -68,8 +75,14 @@ final class NewsController: UIViewController {
     }
 }
 
+// MARK: – Extension's
 extension NewsController: NewsControllerProtocol {
     func setupData(_ model: [News]) {
-        dataSource.model = model
+        if model.isEmpty {
+
+        } else {
+            dataSource.model = model
+            tableView.reloadData()
+        }
     }
 }

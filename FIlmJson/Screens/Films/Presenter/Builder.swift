@@ -8,11 +8,11 @@
 import UIKit
 
 protocol BuilderProtocol: AnyObject {
-    func build() -> NewsController
+    static func build() -> NewsController
 }
 
 final class Builder: BuilderProtocol {
-    func build() -> NewsController {
+    static func build() -> NewsController {
         let view = NewsController()
         let model = CoreDataManager.shared.fetchData()
         let presenter = Presenter(view, model)

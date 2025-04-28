@@ -8,7 +8,6 @@
 import UIKit
 
 final class NewsTable: UITableView {
-    
     // MARK: – Lyfe Cycle
     override init(frame: CGRect, style: UITableView.Style) {
         super.init(frame: frame, style: style)
