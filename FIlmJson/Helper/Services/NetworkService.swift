@@ -7,10 +7,11 @@
 
 import UIKit
 import Alamofire
-import ObjectMapper
+import CoreData
 
 final class NetworkService {
     // MARK: – Set URL
+    private let url = "https://newsapi.org/v2/everything"
     private let param: Parameters = [
         "q":"apple",
         "from":"2025-04-02",
@@ -20,21 +21,19 @@ final class NetworkService {
     ]
     
     // MARK: – GET
-    func getData<T: News>(_ type: T.Type, completion: @escaping ([String: Any]) -> ())
-    where T: Mappable, T: NewsModelProtocol {
-        AF.request(type.urlAPI(), method: .get, parameters: param, headers: nil).validate().responseData(queue: .global()) { (response) in
+    func getData(completion: @escaping (Result<[NewsDTO], Error>) -> ()) {
+        AF.request(url, method: .get, parameters: param, headers: nil)
+            .validate()
+            .responseDecodable(of: ResponseAPI.self, queue: .global()) { response in
             switch response.result {
-            case .success(let data):
-                guard let res = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return }
+            case .success(let responseStruct):
                 DispatchQueue.main.async {
-                    completion(res)
+                    completion(.success(responseStruct.articles))
                 }
             case .failure(let error):
-                print("❌Error: \(error.localizedDescription)")
+                print("❌ Error get data: \(error.localizedDescription)")
+                completion(.failure(error))
             }
         }
     }
 }
-
-
-//"https://newsapi.org/v2/everything?q=apple&from=2025-04-02&to=2025-04-02&sortBy=popularity&apiKey=f3c5a84e22bb4cfabad0cd31a6c89a8a"

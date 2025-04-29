@@ -7,7 +7,6 @@
 
 import UIKit
 
-// как лучше объявлять модель? Через fetch или News(entity: , insertInto: )?
 protocol BuilderDetailProtocol: AnyObject {
     func build() -> DetailController
 }

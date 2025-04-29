@@ -13,6 +13,8 @@ public final class CoreDataManager {
     static let shared = CoreDataManager()
     private init() {}
     
+    private let network = NetworkService()
+    
     // MARK: – AppDelegate
     private var appDelegate: AppDelegate {
         UIApplication.shared.delegate as! AppDelegate
@@ -24,21 +26,22 @@ public final class CoreDataManager {
     }
     
     // MARK: – Create Data
-    func createData(title: String, descriptions: String, image: String, date: String) {
-        guard let userEntityDescription = NSEntityDescription.entity(forEntityName: "News", in: context) else { return }
-        let news = News(entity: userEntityDescription, insertInto: context)
-        
-        news.titleNews = title
-        news.descriptions = descriptions
-        news.photo = image
-        news.date = date
-        
+    func createData(from dtos: [NewsDTO]) {
+        dtos.forEach { dto in
+            let news = News(context: context)
+            news.photo = dto.urlToImage
+            news.date = dto.publishedAt
+            news.titleNews = dto.title
+            news.descriptions = dto.description
+        }
         appDelegate.saveContext()
     }
     
-    // MARK: – FetchData
+    // MARK: – Read Data
     func fetchData() -> [News] {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "News")
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "date", ascending: true)]
+        
         do {
             return try context.fetch(fetchRequest) as! [News]
         } catch let error as NSError {

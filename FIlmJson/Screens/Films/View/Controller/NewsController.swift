@@ -26,18 +26,21 @@ final class NewsController: UIViewController {
         configureView()
         configureTV()
         presesnter.showData()
-        
-        network.getData(News.self) { data in
-            for item in data {
-                print(item)
-            }
-        }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        configureNavigationBarScrolled()
     }
 
     // MARK: – Configure View
     private func configureView() {
         view.backgroundColor = .white
-        // Прибить к левому краю?
+        configureNavigationBarStatic()
+    }
+    
+    // MARK: – Configure Nav Bar
+    private func configureNavigationBarScrolled() {
         self.title = "News"
         let apperance = UINavigationBarAppearance()
         apperance.configureWithOpaqueBackground()
@@ -47,6 +50,10 @@ final class NewsController: UIViewController {
             .font: UIFont.systemFont(ofSize: 25, weight: .black)
         ]
         
+        navigationController?.navigationBar.standardAppearance = apperance
+    }
+    
+    private func configureNavigationBarStatic() {
         let scrolledApperance = UINavigationBarAppearance()
         scrolledApperance.configureWithOpaqueBackground()
         scrolledApperance.backgroundColor = .darkGray
@@ -55,7 +62,6 @@ final class NewsController: UIViewController {
             .font: UIFont.systemFont(ofSize: 25, weight: .black)
         ]
         
-        navigationController?.navigationBar.standardAppearance = apperance
         navigationController?.navigationBar.scrollEdgeAppearance = scrolledApperance
     }
     
@@ -79,7 +85,17 @@ final class NewsController: UIViewController {
 extension NewsController: NewsControllerProtocol {
     func setupData(_ model: [News]) {
         if model.isEmpty {
-
+            network.getData { result in
+                switch result {
+                case .success(let dtoList):
+                    CoreDataManager.shared.createData(from: dtoList)
+                    let newModel = CoreDataManager.shared.fetchData()
+                    self.dataSource.model = newModel
+                    self.tableView.reloadData()
+                case .failure(let error):
+                    print("❌ Error: \(error.localizedDescription)")
+                }
+            }
         } else {
             dataSource.model = model
             tableView.reloadData()

@@ -10,8 +10,6 @@ import SDWebImage
 
 final class NewsDataSource: NSObject, UITableViewDataSource {
     var model: [News] = []
-    private let network = NetworkService()
-    private let imageCache = NSCache<NSString, NSData>()
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         model.count
@@ -23,13 +21,13 @@ final class NewsDataSource: NSObject, UITableViewDataSource {
         let item = model[indexPath.row]
         cell.set(item.titleNews, item.descriptions, item.date)
 
-        // Добавить многопоточку в сервис и кор дату менеджер
-        let url = URL(string: item.photo)
-        cell.mainImage.sd_setImage(with: url,
-                                   placeholderImage: UIImage(systemName: "photo"),
-                                   options: .fromCacheOnly,
-                                   context: nil)
-        
+        guard let stringUrl = item.photo else { return cell }
+        let url = URL(string: stringUrl)
+        let image = cell.getMainImageView()
+        image.sd_setImage(with: url,
+                          placeholderImage: UIImage(systemName: "photo"),
+                          context: nil)
+
         return cell
     }
 }

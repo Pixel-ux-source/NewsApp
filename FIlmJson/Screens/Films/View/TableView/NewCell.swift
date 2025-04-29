@@ -10,11 +10,12 @@ import SnapKit
 
 final class NewCell: UITableViewCell {
     // MARK: – UI Elements
-    lazy var mainImage: UIImageView = {
+    private lazy var mainImage: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 10
         imageView.clipsToBounds = true
+        imageView.tintColor = .white
         return imageView
     }()
     
@@ -108,8 +109,12 @@ final class NewCell: UITableViewCell {
     }
     
     // MARK: – Getter
-    func getImage() -> UIImage? {
+    func getImage() -> UIImage?{
         return mainImage.image
+    }
+    
+    func getMainImageView() -> UIImageView {
+        return mainImage
     }
 
     func getTitle() -> String? {

@@ -5,7 +5,7 @@
 //  Created by Алексей on 28.04.2025.
 //
 
-import UIKit
+import Foundation
 
 protocol NewsModelProtocol {
     static func urlAPI() -> String
